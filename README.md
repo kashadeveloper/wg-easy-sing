@@ -129,6 +129,25 @@ docker compose -f docker-compose.staging.yml up --build -d
 
 The staging container is named `wg-easy-staging`. It uses the ports `51820/udp` and `51821/tcp`, so stop production or development first if they are already using those ports.
 
+### Container Image
+
+The fork-specific GitHub Actions workflow in `.github/workflows/docker.yml` builds the production image from `Dockerfile` and publishes it to GitHub Container Registry (GHCR).
+
+- Pushes to the default branch (`master` or `main`) publish `latest`, a branch tag, and a `sha-*` tag.
+- Tags matching `v*` publish semver tags such as `1.2.3`, `1.2`, and `1`; stable releases also update `latest`.
+- Pull requests build the image without publishing it.
+- Manual runs are available through **Actions → Docker → Run workflow**.
+
+The image name is:
+
+```text
+ghcr.io/<github-owner>/<repository-name>
+```
+
+For example, `ghcr.io/example/wg-easy-fork:latest`. The workflow uses `GITHUB_TOKEN`; no extra registry secret is required. GHCR packages are private by default, so change the package visibility in GitHub if unauthenticated pulls are needed.
+
+The default build platform is `linux/amd64`. To build multiple platforms, create the repository variable `DOCKER_PLATFORMS` under **Settings → Secrets and variables → Actions → Variables** with a value such as `linux/amd64,linux/arm64`. ARM builds run through QEMU and take longer.
+
 ### Update Auto Imports
 
 If you add something that should be auto-importable and VSCode complains, run:
