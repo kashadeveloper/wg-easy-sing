@@ -49,7 +49,8 @@ COPY --from=build-libsql /app/node_modules /app/server/node_modules
 
 # cli
 COPY --from=build /app/cli/cli.sh /usr/local/bin/cli
-RUN chmod +x /usr/local/bin/cli
+# Normalize CRLF so the shebang works when building from a Windows checkout.
+RUN sed -i 's/\r$//' /usr/local/bin/cli && chmod +x /usr/local/bin/cli
 # Copy amneziawg-go
 COPY --from=build /app/amneziawg-go/amneziawg-go /usr/bin/amneziawg-go
 RUN chmod +x /usr/bin/amneziawg-go
@@ -80,7 +81,8 @@ RUN update-alternatives --install /usr/sbin/ip6tables ip6tables /usr/sbin/ip6tab
 RUN update-alternatives --install /usr/sbin/iptables iptables /usr/sbin/iptables-nft 5 --slave /usr/sbin/iptables-restore iptables-restore /usr/sbin/iptables-nft-restore --slave /usr/sbin/iptables-save iptables-save /usr/sbin/iptables-nft-save
 RUN update-alternatives --install /usr/sbin/ip6tables ip6tables /usr/sbin/ip6tables-nft 5 --slave /usr/sbin/ip6tables-restore ip6tables-restore /usr/sbin/ip6tables-nft-restore --slave /usr/sbin/ip6tables-save ip6tables-save /usr/sbin/ip6tables-nft-save
 COPY docker/iptables-backend.sh /usr/local/bin/iptables-backend
-RUN chmod +x /usr/local/bin/iptables-backend
+# Normalize CRLF so the shebang works when building from a Windows checkout.
+RUN sed -i 's/\r$//' /usr/local/bin/iptables-backend && chmod +x /usr/local/bin/iptables-backend
 
 # Set Environment
 ENV DEBUG=Server,WireGuard,Database,CMD,Firewall
