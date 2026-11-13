@@ -79,3 +79,7 @@ The Endpoints are not yet documented. But as file-based routing is used, you can
 | ------------------------------------ | -------------- | ------ |
 | `src/server/api/client/index.get.ts` | `/api/client`  | GET    |
 | `src/server/api/setup/2.post.ts`     | `/api/setup/2` | POST   |
+
+### Client Configuration Formats
+
+`GET /api/client/{clientId}/configuration` returns the WireGuard `.conf` file. Add `?format=singbox` to receive the rendered sing-box JSON instead. The same query parameter works with one-time links at `/cnf/{token}?format=singbox`. See [sing-box](../advanced/config/sing-box.md) for the template format.

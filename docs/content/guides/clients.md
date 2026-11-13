@@ -35,9 +35,9 @@ New clients receive an available VPN address and generated keys. The [Admin Pane
 
 The buttons on each client card let you:
 
-- **Show QR Code**: Scan the code with a compatible VPN app. The dialog also supports downloading or copying the QR code as a PNG.
-- **Download Configuration**: Download the client's configuration file.
-- **Generate short one time link**: Display a temporary download link below the card, with a countdown. The link is valid for five minutes. After the first download, it remains available for up to ten seconds to accommodate duplicate browser requests, without exceeding the original expiry. Further downloads do not extend this grace period.
+- **Show QR Code**: Scan the code with a compatible VPN app. Choose the WireGuard or sing-box format in the dialog; the dialog also supports downloading or copying the QR code as a PNG.
+- **Download Configuration**: Open the download menu and choose **WireGuard (.conf)** or **sing-box (.json)**. The sing-box template is configured under **Admin Panel → Config**. See [sing-box](../advanced/config/sing-box.md).
+- **Generate short one time link**: Display a temporary download link below the card, with a countdown. The link is valid for five minutes. After the first download, it remains available for up to ten seconds to accommodate duplicate browser requests, without exceeding the original expiry. Further downloads do not extend this grace period. Append `?format=singbox` to the link to download the sing-box JSON instead of the WireGuard configuration.
 
 One-time links are intentionally short for manual entry. The current token scheme has only 1,000 possible values per client ID, so links can be guessed. Anyone with an active link can download the complete configuration, including its private key, without signing in. Generate a link when the recipient is ready to use it and share it privately. Authenticated downloads and QR codes are also available.
 

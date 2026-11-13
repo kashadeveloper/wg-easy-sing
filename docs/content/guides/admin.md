@@ -38,6 +38,10 @@ These defaults only affect newly created clients:
 
 When AmneziaWG is active, **Config** also provides default obfuscation parameters for new clients. See [AmneziaWG](../advanced/config/amnezia.md) for details.
 
+### sing-box Template
+
+**Config → sing-box Client Template** stores the JSON template used for sing-box client downloads. The built-in template targets sing-box 1.12 or newer. Leave the field empty or select **Reset to default** to use it. See [sing-box](../advanced/config/sing-box.md) for the available placeholders and limitations.
+
 ## Interface Settings
 
 **Interface** controls the server's VPN interface:

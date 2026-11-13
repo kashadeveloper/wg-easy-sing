@@ -1,5 +1,8 @@
 # WireGuard Easy
 
+> [!IMPORTANT]
+> This repository is a fork of [wg-easy/wg-easy](https://github.com/wg-easy/wg-easy) with additional sing-box client configuration support. It is not an official upstream release. Upstream badges, documentation, and support links refer to the upstream project unless this README says otherwise.
+
 [![Build & Publish latest Image](https://github.com/wg-easy/wg-easy/actions/workflows/deploy.yml/badge.svg)](https://github.com/wg-easy/wg-easy/actions/workflows/deploy.yml)
 [![Lint](https://github.com/wg-easy/wg-easy/actions/workflows/lint.yml/badge.svg?branch=master)](https://github.com/wg-easy/wg-easy/actions/workflows/lint.yml)
 [![GitHub Stars](https://img.shields.io/github/stars/wg-easy/wg-easy)](https://github.com/wg-easy/wg-easy/stargazers)
@@ -37,6 +40,20 @@ You have found the easiest way to install & manage WireGuard on any Linux host!
 - Per-client firewall filtering (requires iptables)
 - OAuth support for Google and GitHub, plus generic OIDC providers such as Authelia and Authentik
 - Experimental AmneziaWG support
+
+## Fork-specific Features
+
+This fork adds templated sing-box client configuration export on top of upstream wg-easy:
+
+- Edit a JSON template under **Admin Panel → Config → sing-box Client Template** and use placeholders such as `{{privateKey}}`, `{{serverPublicKey}}`, `{{addresses}}`, and `{{allowedIps}}`.
+- Download `WireGuard (.conf)` or `sing-box (.json)` from the client card's download menu.
+- Request the sing-box format with `?format=singbox` on authenticated configuration downloads, one-time links, and QR codes.
+- The built-in template targets sing-box 1.12+ and supports full-tunnel and split-tunnel routing.
+
+See [sing-box client configuration](./docs/content/advanced/config/sing-box.md) for the template variables and limitations.
+
+> [!NOTE]
+> The fork-specific sing-box documentation is kept in this repository. For everything else, use the upstream [documentation site](https://wg-easy.github.io/wg-easy/latest) as noted below.
 
 > [!NOTE]
 > To better manage documentation for this project, it has its own site here: [https://wg-easy.github.io/wg-easy/latest](https://wg-easy.github.io/wg-easy/latest)
