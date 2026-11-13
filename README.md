@@ -119,6 +119,16 @@ This starts the development server with docker
 pnpm dev
 ```
 
+### Staging
+
+Builds the production image from `Dockerfile` and runs it with an isolated staging volume and network:
+
+```shell
+docker compose -f docker-compose.staging.yml up --build -d
+```
+
+The staging container is named `wg-easy-staging`. It uses the ports `51820/udp` and `51821/tcp`, so stop production or development first if they are already using those ports.
+
 ### Update Auto Imports
 
 If you add something that should be auto-importable and VSCode complains, run:
