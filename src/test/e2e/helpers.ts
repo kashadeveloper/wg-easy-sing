@@ -48,8 +48,9 @@ export async function createClient(page: Page, name: string) {
 }
 
 export async function downloadConfiguration(page: Page, card: Locator) {
+  await card.getByRole('button', { name: 'Download Configuration' }).click();
   const downloading = page.waitForEvent('download');
-  await card.getByRole('link', { name: 'Download Configuration' }).click();
+  await page.getByRole('menuitem', { name: 'WireGuard (.conf)' }).click();
   const download = await downloading;
   expect(await download.failure()).toBeNull();
   return {

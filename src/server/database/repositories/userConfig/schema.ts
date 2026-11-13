@@ -31,6 +31,7 @@ export const userConfig = sqliteTable('user_configs_table', {
   defaultI3: text('default_i3'),
   defaultI4: text('default_i4'),
   defaultI5: text('default_i5'),
+  singBoxTemplate: text('sing_box_template'),
   host: text().notNull(),
   port: int().notNull(),
   createdAt: text('created_at')

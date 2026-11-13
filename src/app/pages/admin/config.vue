@@ -18,6 +18,47 @@
         />
       </FormGroup>
       <FormGroup>
+        <FormHeading
+          :description="$t('admin.config.singBoxTemplate.description')"
+        >
+          {{ $t('admin.config.singBoxTemplate.label') }}
+        </FormHeading>
+        <div class="col-span-full space-y-3">
+          <BaseTextArea
+            v-model="singBoxTemplate"
+            class="min-h-72 text-xs"
+            spellcheck="false"
+            :aria-label="$t('admin.config.singBoxTemplate.label')"
+          />
+          <p class="text-xs text-subtle">
+            {{ $t('admin.config.singBoxTemplate.hint') }}
+          </p>
+          <p
+            class="flex flex-wrap gap-x-3 gap-y-1 font-mono text-[11px] text-subtle"
+          >
+            <code v-pre>{{#if variable}}...{{/if}}</code>
+            <code v-pre>{{#unless variable}}...{{/unless}}</code>
+          </p>
+          <div class="flex flex-wrap gap-1.5">
+            <code
+              v-for="variable in SINGBOX_TEMPLATE_VARIABLES"
+              :key="variable.name"
+              class="rounded bg-input px-1.5 py-0.5 font-mono text-[11px] text-muted"
+              :title="variable.description"
+            >
+              {{ variablePlaceholder(variable.name) }}
+            </code>
+          </div>
+          <button
+            type="button"
+            class="text-xs text-accent hover:underline"
+            @click="singBoxTemplate = DEFAULT_SINGBOX_TEMPLATE"
+          >
+            {{ $t('admin.config.singBoxTemplate.reset') }}
+          </button>
+        </div>
+      </FormGroup>
+      <FormGroup>
         <FormHeading :description="$t('admin.config.allowedIps.description')">
           {{ $t('wireguard.fields.allowedIps') }}
         </FormHeading>
@@ -117,6 +158,10 @@
 
 <script lang="ts" setup>
 import { $fetch } from '#imports';
+import {
+  DEFAULT_SINGBOX_TEMPLATE,
+  SINGBOX_TEMPLATE_VARIABLES,
+} from '#shared/utils/singbox';
 
 const globalStore = useGlobalStore();
 
@@ -125,6 +170,19 @@ const { data: _data, refresh } = await useFetch(`/api/admin/userconfig`, {
 });
 
 const data = toRef(_data.value);
+
+const singBoxTemplate = computed({
+  get: () => data.value?.singBoxTemplate ?? DEFAULT_SINGBOX_TEMPLATE,
+  set: (value: string) => {
+    if (data.value) {
+      data.value.singBoxTemplate = value;
+    }
+  },
+});
+
+function variablePlaceholder(name: string) {
+  return `{{${name}}}`;
+}
 
 const _submit = useSubmit(
   (data) =>

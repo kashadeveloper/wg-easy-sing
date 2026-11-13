@@ -1,5 +1,5 @@
 <template>
-  <ClientsQRCodeDialog :qr-code="`/api/client/${client.id}/qrcode.svg`">
+  <ClientsQRCodeDialog :client-id="client.id">
     <span class="icon-button" :title="$t('clients.configuration.showQrCode')">
       <QrCodeIcon class="size-4" />
       <span class="sr-only">{{ $t('clients.configuration.showQrCode') }}</span>

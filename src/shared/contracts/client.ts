@@ -128,4 +128,16 @@ export const ClientGetSchema = z.object({
   clientId: clientId,
 });
 
+export const ClientConfigFormatSchema = z.enum(['wireguard', 'singbox']);
+
+export type ClientConfigFormat = z.infer<typeof ClientConfigFormatSchema>;
+
+export const ClientConfigurationQuerySchema = z.object({
+  format: ClientConfigFormatSchema.default('wireguard'),
+});
+
+export type ClientConfigurationQueryType = z.infer<
+  typeof ClientConfigurationQuerySchema
+>;
+
 export type UpdateClientType = z.infer<typeof ClientUpdateSchema>;

@@ -5,13 +5,23 @@
     </template>
     <template #title>{{ $t('clients.configuration.showQrCode') }}</template>
     <template #description>
-      <div class="bg-white">
-        <img
-          ref="img"
-          :src="qrCode"
-          :alt="$t('clients.configuration.showQrCode')"
-          class="mx-auto w-full max-w-72"
+      <div class="space-y-3">
+        <BaseSelect
+          v-model="format"
+          :options="formatOptions"
+          :show-value="false"
+          compact
+          class="w-48"
+          :label="$t('clients.configuration.format')"
         />
+        <div class="bg-white">
+          <img
+            ref="img"
+            :src="qrCode"
+            :alt="$t('clients.configuration.showQrCode')"
+            class="mx-auto w-full max-w-72"
+          />
+        </div>
       </div>
     </template>
     <template #actions>
@@ -43,10 +53,27 @@
 <script setup lang="ts">
 import { ClipboardCopyIcon, DownloadIcon } from '@lucide/vue';
 
-defineProps<{ qrCode: string }>();
+type ConfigFormat = 'wireguard' | 'singbox';
+
+const props = defineProps<{ clientId: number }>();
 
 const toast = useToast();
+const { t } = useI18n();
 const img = useTemplateRef('img');
+const format = ref<ConfigFormat>('wireguard');
+const formatOptions = computed<{ label: string; value: ConfigFormat }[]>(() => [
+  {
+    value: 'wireguard',
+    label: t('clients.configuration.formats.wireguard'),
+  },
+  {
+    value: 'singbox',
+    label: t('clients.configuration.formats.singbox'),
+  },
+]);
+const qrCode = computed(
+  () => `/api/client/${props.clientId}/qrcode.svg?format=${format.value}`
+);
 
 async function svgToPng() {
   if (!img.value || !img.value.complete || img.value.naturalWidth === 0) {
@@ -82,7 +109,7 @@ async function downloadPng() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'client-config.png';
+    a.download = `client-config-${format.value}.png`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

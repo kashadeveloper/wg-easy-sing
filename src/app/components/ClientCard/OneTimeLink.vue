@@ -4,12 +4,20 @@
     class="mt-4 flex items-start gap-2 border-t border-line pt-3 text-xs text-muted"
   >
     <LinkIcon class="size-4 shrink-0 text-accent" />
-    <a
-      :href="'/cnf/' + client.oneTimeLink.oneTimeLink"
-      class="font-mono break-all hover:text-foreground"
-    >
-      {{ path }}
-    </a>
+    <div class="min-w-0 space-y-1">
+      <a
+        :href="'/cnf/' + client.oneTimeLink.oneTimeLink"
+        class="font-mono break-all hover:text-foreground"
+      >
+        {{ path }}
+      </a>
+      <a
+        :href="'/cnf/' + client.oneTimeLink.oneTimeLink + '?format=singbox'"
+        class="block text-accent hover:text-foreground"
+      >
+        {{ $t('clients.configuration.formats.singbox') }}
+      </a>
+    </div>
   </div>
 </template>
 

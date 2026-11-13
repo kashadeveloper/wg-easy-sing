@@ -237,7 +237,13 @@
       "title": "Configuration",
       "view": "View Configuration",
       "downloadPng": "Download PNG",
-      "copyPng": "Copy PNG"
+      "copyPng": "Copy PNG",
+      "format": "Configuration format",
+      "formats": {
+        "wireguard": "WireGuard (.conf)",
+        "singbox": "sing-box (.json)"
+      },
+      "loadError": "Unable to load the configuration."
     },
     "traffic": {
       "totalDownload": "Total Download: {total}",
@@ -374,6 +380,12 @@
       "generatePreSharedKey": {
         "label": "Generate Preshared Keys",
         "description": "Automatically generate preshared keys for new clients"
+      },
+      "singBoxTemplate": {
+        "label": "sing-box Client Template",
+        "description": "JSON template for sing-box client configurations. Placeholders are replaced for each client. Leave empty or reset to use the built-in default.",
+        "hint": "Placeholders use double curly braces. Strings are JSON-escaped, while numbers, booleans, and arrays are inserted as JSON values. Conditional blocks are supported:",
+        "reset": "Reset to default"
       },
       "suggest": {
         "label": "Suggest",
@@ -577,6 +589,8 @@
     "userConfig": {
       "host": "Host"
     },
+    "singBoxTemplate": "sing-box template",
+    "singBoxTemplateTooLong": "sing-box template is too long",
     "general": {
       "sessionTimeout": "Session Timeout",
       "metricsEnabled": "Metrics",

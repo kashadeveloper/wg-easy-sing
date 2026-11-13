@@ -14,6 +14,7 @@ import type {
 } from '#shared/contracts/interface';
 import type { HooksUpdateType } from '#shared/contracts/hooks';
 import type { UserConfigUpdateType } from '#shared/contracts/userConfig';
+import { DEFAULT_SINGBOX_TEMPLATE } from '#shared/utils/singbox';
 import {
   isClientAddress,
   nextIPFromUsedAddresses,
@@ -106,7 +107,16 @@ export function getDefaults(actor: Actor) {
 
 export async function updateDefaults(actor: Actor, data: UserConfigUpdateType) {
   authorize(actor, 'admin', 'any');
-  await commit((tx) => tx.userConfigs.update(data));
+  const template = data.singBoxTemplate?.trim();
+  await commit((tx) =>
+    tx.userConfigs.update({
+      ...data,
+      singBoxTemplate:
+        !template || template === DEFAULT_SINGBOX_TEMPLATE.trim()
+          ? null
+          : template,
+    })
+  );
 }
 
 export function restart(actor: Actor) {

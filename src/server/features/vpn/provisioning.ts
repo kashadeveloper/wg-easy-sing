@@ -3,43 +3,63 @@ import CRC32 from 'crc-32';
 
 import { authorizeClient, isExpired, type Actor } from './policies';
 import { generateClientConfig } from './configuration';
+import { generateSingBoxConfig } from './singbox';
 
 import { WG_ENV } from '#server/utils/config';
 import { getDatabase } from '#db';
 import type { Repositories } from '#db/store';
+import type { ClientConfigFormat } from '#shared/contracts/client';
 
-function filename(name: string, id: number) {
+function filenameBase(name: string, id: number) {
   const clean = name
     .replace(/[^a-zA-Z0-9_=+.-]/g, '-')
     .replace(/(-{2,}|-$)/g, '-')
     .replace(/-$/, '')
     .substring(0, 32);
-  return `${clean || id}.conf`;
+  return clean || id.toString();
 }
 
 async function configuration(
   tx: Repositories,
-  client: NonNullable<Awaited<ReturnType<Repositories['clients']['get']>>>
+  client: NonNullable<Awaited<ReturnType<Repositories['clients']['get']>>>,
+  format: ClientConfigFormat = 'wireguard'
 ) {
   const network = await tx.interfaces.get();
   const defaults = await tx.userConfigs.get();
+  const base = filenameBase(client.name, client.id);
+
+  if (format === 'singbox') {
+    return {
+      filename: `${base}.json`,
+      contents: generateSingBoxConfig(network, defaults, client, {
+        enableIpv6: !WG_ENV.DISABLE_IPV6,
+      }),
+      contentType: 'application/json; charset=utf-8',
+    };
+  }
+
   return {
-    filename: filename(client.name, client.id),
+    filename: `${base}.conf`,
     contents: generateClientConfig(network, defaults, client, {
       enableIpv6: !WG_ENV.DISABLE_IPV6,
       amnezia: WG_ENV.WG_EXECUTABLE === 'awg',
     }),
+    contentType: 'application/octet-stream',
   };
 }
 
-export function download(actor: Actor, clientId: number) {
+export function download(
+  actor: Actor,
+  clientId: number,
+  format: ClientConfigFormat = 'wireguard'
+) {
   return getDatabase().transaction(async (tx) => {
     const client = authorizeClient(
       actor,
       'view',
       await tx.clients.get(clientId)
     );
-    return configuration(tx, client);
+    return configuration(tx, client, format);
   });
 }
 
@@ -57,7 +77,10 @@ export function generateOneTimeLink(actor: Actor, clientId: number) {
   });
 }
 
-export function redeemOneTimeLink(token: string) {
+export function redeemOneTimeLink(
+  token: string,
+  format: ClientConfigFormat = 'wireguard'
+) {
   return getDatabase().transaction(async (tx) => {
     const link = await tx.oneTimeLinks.getByToken(token);
     if (!link) {
@@ -80,7 +103,7 @@ export function redeemOneTimeLink(token: string) {
         statusText: 'Invalid One Time Link',
       });
     }
-    const result = await configuration(tx, client);
+    const result = await configuration(tx, client, format);
     // Downloads may shorten the lifetime, but must never extend it.
     const expiresAt = Math.min(Date.parse(link.expiresAt), now + 10_000);
     await tx.oneTimeLinks.setExpiry(link.id, new Date(expiresAt).toISOString());

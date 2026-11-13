@@ -296,7 +296,37 @@ describe('VPN operations', () => {
     await vpnFixture();
     const download = await provisioning.download(admin, 1);
     expect(download.filename).toBe('Client.conf');
+    expect(download.contentType).toBe('application/octet-stream');
     expect(download.contents).toContain('PrivateKey = private');
+  });
+
+  test('returns the authorized sing-box configuration', async () => {
+    await vpnFixture();
+    const download = await provisioning.download(admin, 1, 'singbox');
+    expect(download.filename).toBe('Client.json');
+    expect(download.contentType).toBe('application/json; charset=utf-8');
+    expect(JSON.parse(download.contents)).toMatchObject({
+      endpoints: [
+        {
+          type: 'wireguard',
+          private_key: 'private',
+        },
+      ],
+    });
+  });
+
+  test('serves sing-box configurations through one-time links', async () => {
+    const { store } = await vpnFixture();
+    await provisioning.generateOneTimeLink(admin, 1);
+    const [client] = await store.clients.getAll();
+    const token = client!.oneTimeLink!.oneTimeLink;
+
+    const download = await provisioning.redeemOneTimeLink(token, 'singbox');
+    expect(download.filename).toBe('Client.json');
+    expect(download.contentType).toBe('application/json; charset=utf-8');
+    expect(JSON.parse(download.contents)).toMatchObject({
+      endpoints: [{ type: 'wireguard', private_key: 'private' }],
+    });
   });
 
   test('rejects unknown one-time links', async () => {
